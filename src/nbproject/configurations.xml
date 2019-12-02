@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>bisector.h</itemPath>
+      <itemPath>defs.h</itemPath>
+      <itemPath>file_io.h</itemPath>
+      <itemPath>isect.h</itemPath>
+      <itemPath>log.h</itemPath>
+      <itemPath>mwvd.h</itemPath>
+      <itemPath>offcirc.h</itemPath>
+      <itemPath>overlay.h</itemPath>
+      <itemPath>sites.h</itemPath>
+      <itemPath>timepnt.h</itemPath>
+      <itemPath>traj.h</itemPath>
+      <itemPath>util.h</itemPath>
+      <itemPath>view.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+      <itemPath>mwvd.qrc</itemPath>
+      <itemPath>mwvd.ui</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>bisector.cpp</itemPath>
+      <itemPath>file_io.cpp</itemPath>
+      <itemPath>isect.cpp</itemPath>
+      <itemPath>log.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>mwvd.cpp</itemPath>
+      <itemPath>offcirc.cpp</itemPath>
+      <itemPath>overlay.cpp</itemPath>
+      <itemPath>sites.cpp</itemPath>
+      <itemPath>timepnt.cpp</itemPath>
+      <itemPath>traj.cpp</itemPath>
+      <itemPath>util.cpp</itemPath>
+      <itemPath>view.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="4">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <qt>
+        <modules>core gui widgets</modules>
+      </qt>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>BOOST_LOG_DYN_LINK</Elem>
+            <Elem>ENABLE_VIEW</Elem>
+            <Elem>NDEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerOptionItem>-lboost_system</linkerOptionItem>
+            <linkerOptionItem>-lboost_log_setup</linkerOptionItem>
+            <linkerOptionItem>-lboost_log</linkerOptionItem>
+            <linkerOptionItem>-lboost_program_options</linkerOptionItem>
+            <linkerOptionItem>-lboost_thread</linkerOptionItem>
+            <linkerOptionItem>-lgmp</linkerOptionItem>
+            <linkerOptionItem>-lmpfr</linkerOptionItem>
+            <linkerOptionItem>-lCGAL</linkerOptionItem>
+            <linkerOptionItem>-lCGAL_Core</linkerOptionItem>
+            <linkerOptionItem>-lCGAL_Qt5</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="bisector.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="bisector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="defs.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="file_io.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="file_io.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="isect.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="isect.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="log.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="log.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="mwvd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="mwvd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="mwvd.qrc" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="mwvd.ui" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="offcirc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="offcirc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="overlay.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="overlay.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sites.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="sites.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="timepnt.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="timepnt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="traj.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="traj.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="view.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="view.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="4">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <qt>
+        <buildMode>1</buildMode>
+        <modules>core gui widgets</modules>
+      </qt>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <standard>8</standard>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>BOOST_LOG_DYN_LINK</Elem>
+            <Elem>ENABLE_VIEW</Elem>
+            <Elem>NDEBUG</Elem>
+          </preprocessorList>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerOptionItem>-lboost_system</linkerOptionItem>
+            <linkerOptionItem>-lboost_log</linkerOptionItem>
+            <linkerOptionItem>-lboost_log_setup</linkerOptionItem>
+            <linkerOptionItem>-lboost_program_options</linkerOptionItem>
+            <linkerOptionItem>-lboost_thread</linkerOptionItem>
+            <linkerOptionItem>-lgmp</linkerOptionItem>
+            <linkerOptionItem>-lmpfr</linkerOptionItem>
+            <linkerOptionItem>-lCGAL</linkerOptionItem>
+            <linkerOptionItem>-lCGAL_Core</linkerOptionItem>
+            <linkerOptionItem>-lCGAL_Qt5</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="bisector.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="bisector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="defs.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="file_io.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="file_io.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="isect.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="isect.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="log.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="log.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="mwvd.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="mwvd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="mwvd.qrc" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="mwvd.ui" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="offcirc.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="offcirc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="overlay.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="overlay.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sites.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="sites.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="timepnt.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="timepnt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="traj.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="traj.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="view.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="view.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

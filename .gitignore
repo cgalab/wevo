@@ -1,0 +1,78 @@
+# Prerequisites
+*.d
+mwvd_log.txt
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# NetBeans and Folders
+src/build/
+src/dist/
+src/data/
+src/nbproject/*
+!src/nbproject/configurations.xml
+!src/nbproject/project.xml
+VRONI_7.0/
+*.inc
+
+# Output
+outputs/
+build
+src/log/
+
+# CMake
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Qt-es
+src/.qmake.cache
+src/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.moc
+moc_*.h
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+Makefile*
+*-build-*
+!src/Makefile
+real_life_inputs
+test/run_tests2.sh
+test/run_tests3.sh
+test/randomize_pnts_norm.py
