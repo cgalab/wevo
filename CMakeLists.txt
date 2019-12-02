@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(mwvd)
+project(wevo)
 
 option(BUILD_VIEW "Build with graphical user interface" OFF)
 option(BUILD_LOG "Build with logging functionality" OFF)

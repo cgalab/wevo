@@ -16,5 +16,5 @@ for i in {8..15}; do
 done
 
 for entry in "$inputs"/*.pnts; do
-	./mwvd --input-file "$entry" --csv-file "$results"
+	./wevo --input-file "$entry" --csv-file "$results"
 done
