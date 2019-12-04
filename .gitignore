@@ -44,7 +44,6 @@ VRONI_7.0/
 
 # Output
 outputs/
-build
 src/log/
 
 # CMake

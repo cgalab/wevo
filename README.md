@@ -3,7 +3,7 @@
 `wevo` is currently an experimental prototype implementation. It computes the multiplicatively weighted Voronoi diagram of a given point set. Example input files can be found in the `inputs` folder.
 
 ## Build
-The easiest way to build `wevo` is by using the corresponding `CMakeLists.txt` file. If you also want to use the built-in view then don't forget to build `wevo` with the `BUILD_VIEW` option.
+The easiest way to build `wevo` is by using the corresponding `CMakeLists.txt` file. If you also want to use the built-in view then don't forget to build `wevo` with the `BUILD_VIEW` option. To run some examples, execute the `run_examples.sh` script that is situated in the `build` directory.
 
 ## Command Line Options
 `wevo` currently supports the following command line options:
