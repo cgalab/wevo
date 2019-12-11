@@ -864,7 +864,7 @@ void OffCircGraphicsItem::paint(QPainter *painter,
             const auto pntSite
                     = std::static_pointer_cast<PntSite>(m_offCirc->site());
             const auto circ = pntSite->growOffAt(m_sqrdTime);
-            painter->setPen(QPen{QBrush{Qt::blue}, 1.});
+            painter->setPen(QPen{QBrush{Qt::blue}, 2.});
             Util::draw(painter, circ);
         }
         
@@ -900,18 +900,18 @@ void OffCircGraphicsItem::paint(QPainter *painter,
                     = std::static_pointer_cast<PntSite>(m_offCirc->site());
             const auto circ = pntSite->growOffAt(m_sqrdTime);
             const auto arc = Circular_arc_2{circ, pnt1, pnt2};
-            painter->setPen(QPen{QBrush{bIsOnWf ? Qt::blue : Qt::lightGray}, 1.});
+            painter->setPen(QPen{QBrush{bIsOnWf ? Qt::blue : Qt::lightGray}, 2.});
             Util::draw(painter, arc);
         }
         
         auto brush = QBrush{bIsWfVert1 ? Qt::blue : Qt::lightGray};
         painter->setBrush(brush);
-        painter->setPen(QPen{brush, 1.});
+        painter->setPen(QPen{brush, 2.});
         Util::draw(painter, pnt1);
         
         brush = QBrush{bIsWfVert2 ? Qt::blue : Qt::lightGray};
         painter->setBrush(brush);
-        painter->setPen(QPen{brush, 1.});
+        painter->setPen(QPen{brush, 2.});
         Util::draw(painter, pnt2);
     }
 }

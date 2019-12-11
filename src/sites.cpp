@@ -66,8 +66,8 @@ void SiteGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*,
                              QWidget*) {
     if (typeid(*m_site) == typeid(PntSite)) {
         const auto pntSite = std::static_pointer_cast<PntSite>(m_site);
-        painter->setPen(Qt::darkGreen);
         painter->setBrush(Qt::darkGreen);
+        painter->setPen(QPen{Qt::darkGreen, 4.});
         Util::draw(painter, pntSite->pnt());
     }
 }

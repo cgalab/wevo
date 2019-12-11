@@ -967,10 +967,16 @@ void VorDiagGraphicsItem::onNextEv(double t) {
 void VorDiagGraphicsItem::paint(QPainter *painter,
                                 const QStyleOptionGraphicsItem *, QWidget *) {
     for (const auto &edge : m_vorDiag.edges()) {
+        auto brush = QBrush{Qt::black};
+        painter->setBrush(brush);
+        painter->setPen(QPen{brush, 1.});
         Util::draw(painter, edge);
     }
     
     for (const auto &edge : m_vorDiag.segs()) {
+        auto brush = QBrush{Qt::black};
+        painter->setBrush(brush);
+        painter->setPen(QPen{brush, 1.});
         Util::draw(painter, edge);
     }
 }

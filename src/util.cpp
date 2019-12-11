@@ -84,8 +84,8 @@ QRectF Util::boundingRect(const Circle_2 &circ) {
     double radius = std::sqrt(CGAL::to_double(circ.squared_radius())) * V_SC,
             x = CGAL::to_double(circ.center().x()) * V_SC,
             y = CGAL::to_double(circ.center().y()) * V_SC;
-    return QRectF{x - radius - 10., y - radius - 10.,
-                  2. * (radius + 10.), 2. * (radius + 10.)};
+    return QRectF{x - radius - 2., y - radius - 2.,
+                  2. * radius + 4., 2. * radius + 4.};
 }
 
 #endif

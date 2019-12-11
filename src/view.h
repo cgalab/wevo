@@ -33,7 +33,7 @@ private:
     CGAL::Qt::GraphicsViewNavigation m_navigation;
     QGraphicsScene m_scene;
     double m_time{0.};
-    double m_stepSize{1e-2};
+    double m_stepSize{.001};
     bool m_bShowVorDiag{true};
 };
 
