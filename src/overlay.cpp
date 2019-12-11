@@ -161,6 +161,6 @@ void Overlay::compOverlay() {
         }
     }
 
-    std::cout << "The largest candidate size has size " << maxSize << ".\n"
+    std::cout << "The largest candidate set has size " << maxSize << ".\n"
             << "There are " << m_candSets.size() << " candidate sets.\n";
 }
