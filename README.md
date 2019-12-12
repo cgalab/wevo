@@ -14,6 +14,7 @@ The easiest way to build `wevo` is by using the corresponding `CMakeLists.txt` f
 --csv-file <file> ... append runtime data to a CSV file
 --view ... open graphical user interface
 ~~~~
+You can close the `wevo` window by pressing `ESC`.
 
 ## Testing
 The `wevo` project offers a simple test environment which is situated in the folder `test`. If you run the bash script `run_tests.sh` (within `test`), then a series of randomly generated inputs is produced, `wevo` is executed on each of them, and the runtime statistics are written into `test/results.csv`.
