@@ -26,6 +26,9 @@ signals:
     void prevEv(double t);
     void nextEv(double t);
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    
 private:
     void centerWidget();
     

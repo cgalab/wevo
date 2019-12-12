@@ -1,6 +1,7 @@
 #ifdef ENABLE_VIEW
 
 #include <QDesktopWidget>
+#include <QKeyEvent>
 #include "view.h"
 #include "offcirc.h"
 #include "bisector.h"
@@ -92,6 +93,17 @@ void MainWindow::centerWidget() {
     auto rect = geometry();
     rect.moveCenter(QApplication::desktop()->availableGeometry().center());
     setGeometry(rect);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    switch(event->key())
+    {
+    case Qt::Key_Escape:
+        close();
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
+    }
 }
 
 #include "moc_view.cpp"
