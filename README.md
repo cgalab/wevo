@@ -3,7 +3,14 @@
 `wevo` is currently an experimental prototype implementation. It computes the multiplicatively weighted Voronoi diagram of a given point set. Example input files can be found in the `inputs` folder.
 
 ## Build
-The easiest way to build `wevo` is by using the corresponding `CMakeLists.txt` file. If you also want to use the built-in view then don't forget to build `wevo` with the `BUILD_VIEW` option. To run some examples, execute the `run_examples.sh` script that is situated in the `build` directory.
+The easiest way to build `wevo` is by using the corresponding `CMakeLists.txt` file. If you also want to use the built-in view then don't forget to build `wevo` with the `BUILD_VIEW` option. To run some examples, execute the `run_examples.sh` script that is situated in the `build` directory. In particular, execute the following commands (from the `wevo` directory) to run our example inputs:
+~~~~
+cd build &&
+cmake -DCMAKE_BUILD_TYPE=Release .. &&
+make &&
+bash run_examples.sh
+~~~~
+
 
 ## Command Line Options
 `wevo` currently supports the following command line options:
@@ -17,4 +24,10 @@ The easiest way to build `wevo` is by using the corresponding `CMakeLists.txt` f
 You can close the `wevo` window by pressing `ESC`.
 
 ## Testing
-The `wevo` project offers a simple test environment which is situated in the folder `test`. If you run the bash script `run_tests.sh` (within `test`), then a series of randomly generated inputs is produced, `wevo` is executed on each of them, and the runtime statistics are written into `test/results.csv`.
+The `wevo` project offers a simple test environment which is situated in the folder `test`. If you run the bash script `run_tests.sh` (within `test`), then a series of randomly generated inputs is produced, `wevo` is executed on each of them, and the runtime statistics are written into `test/results.csv`. Execute the following commands (from the `wevo` directory) to run our test scripts:
+~~~~
+cd test &&
+cmake -DCMAKE_BUILD_TYPE=Release .. &&
+make &&
+bash run_tests.sh
+~~~~
