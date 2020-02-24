@@ -1,0 +1,43 @@
+language: cpp
+
+cache:
+  ccache: true
+
+os:
+  - linux
+
+addons:
+  apt:
+    update: true
+    packages:
+      - cmake
+      - libboost-system-dev
+      - libboost-thread-dev
+      - libboost-program-options-dev
+      - libboost-log-dev
+      - libcgal-dev
+      - libcgal-qt5-dev
+      - libgmp-dev
+      - libmpfr-dev
+      - libqt5opengl5-dev
+      - libqt5svg5-dev
+      - qtbase5-dev
+
+env:
+  global:
+    - MAKEFLAGS="-j 2"
+
+matrix:
+  include:
+    - compiler: clang
+      env: BUILD_TYPE="Release"
+    - compiler: clang
+      env: BUILD_TYPE="Debug"
+    - compiler: gcc
+      env: BUILD_TYPE="Release"
+    - compiler: gcc
+      env: BUILD_TYPE="Debug"
+
+script:
+ - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" .
+ - make
