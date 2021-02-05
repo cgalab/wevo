@@ -162,7 +162,7 @@
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
-          <standard>8</standard>
+          <standard>11</standard>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>BOOST_LOG_DYN_LINK</Elem>
