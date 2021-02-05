@@ -3,6 +3,7 @@
 #include <deque>
 #include <fstream>
 #include <regex>
+#include <math.h>
 #ifdef ENABLE_VIEW
 #include <QString>
 #endif
@@ -91,8 +92,7 @@ void Overlay::compOverlay() {
     const auto fCompOverlay
             = [&](std::deque<Arrangement_2> arrs) {
                 while (arrs.size() > 1) {
-                    /*std::cout << "\tMerging " << arrs.size()
-                            << " arrangements ...\n";*/
+                    std::cout << "\tMerging " << arrs.size() << " arrangements ...\n";
                     std::deque<Arrangement_2> temps;
                     for (int i = arrs.size() - 1; i >= 0; i -= 2) {
                         const auto arr1 = arrs.at(i);
@@ -149,18 +149,21 @@ void Overlay::compOverlay() {
 
     fCompOverlay(arrs);
 
-    size_t maxSize = 0;
     Arrangement_2::Face_iterator fit;
+    double cumulatedSize = 0.;
     for (fit = overlayArr.faces_begin();
          fit != overlayArr.faces_end(); ++fit) {
         const auto candSet = fit->data();
         m_candSets.push_back(candSet);
 
-        if (candSet.size() > maxSize) {
-            maxSize = candSet.size();
+        cumulatedSize += candSet.size();
+        if (candSet.size() > m_maxSize) {
+            m_maxSize = candSet.size();
         }
     }
 
-    std::cout << "The largest candidate set has size " << maxSize << ".\n"
+    m_avgSize = std::round(cumulatedSize / m_candSets.size());
+    std::cout << "The largest candidate size has size " << m_maxSize << ".\n"
+            << "The average candidate size has size " << m_avgSize << ".\n"
             << "There are " << m_candSets.size() << " candidate sets.\n";
 }

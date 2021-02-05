@@ -94,42 +94,45 @@ void BisecPntPnt::compTrajs() {
         using IsectResult
                 = CGAL::CK2_Intersection_traits<CK, Circle_2, Line_2>::type;
         using Isect = std::pair<Circular_arc_point_2, unsigned int>;
-        std::vector<IsectResult> results;
-        CGAL::intersection(circ, m_centerLine, std::back_inserter(results));
 
-        CGAL_assertion(results.size() == 2);
-        if (results.size() != 2) {
-            return;
+        if (circ.squared_radius() > 0) {
+            std::vector<IsectResult> results;
+            CGAL::intersection(circ, m_centerLine, std::back_inserter(results));
+
+            CGAL_assertion(results.size() == 2);
+            if (results.size() != 2) {
+                return;
+            }
+
+            auto pnt1 = std::get<0>(boost::get<Isect>(results.at(0))),
+                    pnt2 = std::get<0>(boost::get<Isect>(results.at(1)));
+            auto t1 = m_site1->sqrdDist(pnt1), t2 = m_site1->sqrdDist(pnt2);
+
+            if (t1 > t2) {
+                std::swap(pnt1, pnt2);
+                std::swap(t1, t2);
+            }
+
+            m_coll = std::make_shared<TransitPnt>(pnt1, t1, id(), id(), PntType::Coll);
+            m_dom = std::make_shared<TransitPnt>(pnt2, t2, id(), id(), PntType::Dom);
+
+            const auto arc1 = Circular_arc_2{circ, pnt1, pnt2},
+            arc2 = Circular_arc_2{circ, pnt2, pnt1};
+
+            const auto trajSec1 = std::make_shared<TrajSecPntPnt>(m_coll, m_dom, m_site1,
+                                                                  m_site2, false, arc1),
+                    trajSec2 = std::make_shared<TrajSecPntPnt>(m_coll, m_dom, m_site1,
+                                                               m_site2, true, arc2);
+
+            const auto traj1 = std::make_shared<Traj>(m_site1, m_site2, true),
+                    traj2 = std::make_shared<Traj>(m_site1, m_site2, false);
+
+            traj1->insSec(trajSec1);
+            traj2->insSec(trajSec2);
+
+            m_trajs.push_back(traj1);
+            m_trajs.push_back(traj2);
         }
-
-        auto pnt1 = std::get<0>(boost::get<Isect>(results.at(0))),
-                pnt2 = std::get<0>(boost::get<Isect>(results.at(1)));
-        auto t1 = m_site1->sqrdDist(pnt1), t2 = m_site1->sqrdDist(pnt2);
-
-        if (t1 > t2) {
-            std::swap(pnt1, pnt2);
-            std::swap(t1, t2);
-        }
-
-        m_coll = std::make_shared<TransitPnt>(pnt1, t1, id(), id(), PntType::Coll);
-        m_dom = std::make_shared<TransitPnt>(pnt2, t2, id(), id(), PntType::Dom);
-
-        const auto arc1 = Circular_arc_2{circ, pnt1, pnt2},
-                    arc2 = Circular_arc_2{circ, pnt2, pnt1};
-
-        const auto trajSec1 = std::make_shared<TrajSecPntPnt>(m_coll, m_dom, m_site1,
-                                                              m_site2, false, arc1),
-                trajSec2 = std::make_shared<TrajSecPntPnt>(m_coll, m_dom, m_site1,
-                                                           m_site2, true, arc2);
-
-        const auto traj1 = std::make_shared<Traj>(m_site1, m_site2, true),
-                traj2 = std::make_shared<Traj>(m_site1, m_site2, false);
-
-        traj1->insSec(trajSec1);
-        traj2->insSec(trajSec2);
-
-        m_trajs.push_back(traj1);
-        m_trajs.push_back(traj2);
     }
 }
 

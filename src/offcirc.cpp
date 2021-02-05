@@ -59,14 +59,16 @@ void OffCirc::writeArcsToIpe(IpeWriter &iw, const Root_of_2 &maxTime,
                     size_t si1 = switches.at(isect1->id()),
                             si2 = switches.at(isect2->id());
 
-                    if (si1 < isect1->switches().size() - 1) {
+                    if (!isect1->switches().empty()
+                        && si1 < isect1->switches().size() - 1) {
                         const auto nsw = isect1->switches().at(si1);
                         if (nsw.first < time) {
                             switches[isect1->id()] = si1 + 1;
                         }
                     }
 
-                    if (si2 < isect2->switches().size() - 1) {
+                    if (!isect2->switches().empty()
+                        && si2 < isect2->switches().size() - 1) {
                         const auto nsw = isect2->switches().at(si2);
                         if (nsw.first < time) {
                             switches[isect2->id()] = si2 + 1;
@@ -475,23 +477,23 @@ std::pair<bool, bool> OffCirc::expandIsect(const Root_of_2 &sqrdTime,
                 CGAL_assertion(std::abs(angle1 - angle2) < 1e-2);
                 CGAL_assertion(std::abs(angle1 - angle2) > 1e-12);
                 if (std::abs(angle1 - angle2) < 1e-12) {
-#ifdef ENABLE_LOGGING
+/*#ifdef ENABLE_LOGGING
                     BOOST_LOG_SEV(slg, error) << "Angle difference too low!";
                     BOOST_LOG_SEV(slg, error) << "angle1 equals " << angle1
-                            << " and angle2 equals " << angle2 << ".";
+                            << " and angle2 equals " << angle2 << ".";*/
                     std::cout << "Angle difference too low! "
                             << angle1 << " " << angle2 << "\n";
-#endif
+//#endif
                 }
 
                 if (std::abs(angle1 - angle2) > 1e-2) {
-#ifdef ENABLE_LOGGING
+/*#ifdef ENABLE_LOGGING
                     BOOST_LOG_SEV(slg, error) << "Angle difference too high!";
                     BOOST_LOG_SEV(slg, error) << "angle1 equals " << angle1
-                            << " and angle2 equals " << angle2 << ".";
+                            << " and angle2 equals " << angle2 << ".";*/
                     std::cout << "Angle difference too high! "
                             << angle1 << " " << angle2 << "\n";
-#endif
+//#endif
                 }
 
                 return angle1 < angle2;
@@ -864,7 +866,7 @@ void OffCircGraphicsItem::paint(QPainter *painter,
             const auto pntSite
                     = std::static_pointer_cast<PntSite>(m_offCirc->site());
             const auto circ = pntSite->growOffAt(m_sqrdTime);
-            painter->setPen(QPen{QBrush{Qt::blue}, 2.});
+            painter->setPen(QPen{QBrush{Qt::blue}, 1.});
             Util::draw(painter, circ);
         }
         
@@ -900,18 +902,18 @@ void OffCircGraphicsItem::paint(QPainter *painter,
                     = std::static_pointer_cast<PntSite>(m_offCirc->site());
             const auto circ = pntSite->growOffAt(m_sqrdTime);
             const auto arc = Circular_arc_2{circ, pnt1, pnt2};
-            painter->setPen(QPen{QBrush{bIsOnWf ? Qt::blue : Qt::lightGray}, 2.});
+            painter->setPen(QPen{QBrush{bIsOnWf ? Qt::blue : Qt::lightGray}, 1.});
             Util::draw(painter, arc);
         }
         
         auto brush = QBrush{bIsWfVert1 ? Qt::blue : Qt::lightGray};
         painter->setBrush(brush);
-        painter->setPen(QPen{brush, 2.});
+        painter->setPen(QPen{brush, 1.});
         Util::draw(painter, pnt1);
         
         brush = QBrush{bIsWfVert2 ? Qt::blue : Qt::lightGray};
         painter->setBrush(brush);
-        painter->setPen(QPen{brush, 2.});
+        painter->setPen(QPen{brush, 1.});
         Util::draw(painter, pnt2);
     }
 }

@@ -1,7 +1,6 @@
 #ifdef ENABLE_VIEW
 
 #include <QDesktopWidget>
-#include <QKeyEvent>
 #include "view.h"
 #include "offcirc.h"
 #include "bisector.h"
@@ -16,22 +15,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui.graphicsView->installEventFilter(&m_navigation);
     ui.graphicsView->viewport()->installEventFilter(&m_navigation);
     ui.graphicsView->setRenderHint(QPainter::Antialiasing);
-    ui.lineEditTime->setText(QString::number(std::sqrt(m_time)));
-    ui.lineEditStepSize->setText(QString::number(m_stepSize));
+    ui.lineEditTime->setText(QString::number(m_time));
+    ui.lineEditStepSize->setText(QString::number(std::sqrt(m_stepSize)));
     
     QObject::connect(ui.actionIncrTime, &QAction::triggered, this,
                      [this]() {
-                         m_time = std::pow(std::sqrt(m_time) + m_stepSize, 2.);
+                         m_time += m_stepSize;
                          ui.lineEditTime->setText(QString::number(std::sqrt(m_time)));
                          emit timeChanged(m_time);
                      });
-    QObject::connect(ui.actionDecrTime, &QAction::triggered, this,
+    QObject::connect(ui.actionDecrTime, &QAction::triggered, this, 
                      [this]() {
-                         if (m_time - m_stepSize >= 0.) {
-                             m_time = std::pow(std::sqrt(m_time) - m_stepSize, 2.);
-                             ui.lineEditTime->setText(QString::number(std::sqrt(m_time)));
-                             emit timeChanged(m_time);
-                         }
+                         m_time -= m_stepSize;
+                         ui.lineEditTime->setText(QString::number(std::sqrt(m_time)));
+                         emit timeChanged(m_time);
                      });
     QObject::connect(ui.actionToggleVorDiag, &QAction::triggered, this,
                      [this]() {
@@ -45,14 +42,6 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(ui.actionNextEv, &QAction::triggered, this,
                      [this]() {
                          emit nextEv(m_time);
-                     });
-    QObject::connect(ui.lineEditStepSize, &QLineEdit::textChanged, this,
-                     [this](const QString & stepSize) {
-                         bool bOk = false;
-                         double d = stepSize.toDouble(&bOk);
-                         if (bOk && d > 0.) {
-                            m_stepSize = d;
-                         }
                      });
 
     resize(1280, 1024);
@@ -85,7 +74,7 @@ void MainWindow::addItem(QGraphicsItem *item) {
 
 void MainWindow::onTimeChanged(double t) {
     m_time = t;
-    ui.lineEditTime->setText(QString::number(m_time));
+    ui.lineEditTime->setText(QString::number(std::sqrt(m_time)));
     emit timeChanged(m_time);
 }
 
@@ -93,17 +82,6 @@ void MainWindow::centerWidget() {
     auto rect = geometry();
     rect.moveCenter(QApplication::desktop()->availableGeometry().center());
     setGeometry(rect);
-}
-
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-    switch(event->key())
-    {
-    case Qt::Key_Escape:
-        close();
-        break;
-    default:
-        QMainWindow::keyPressEvent(event);
-    }
 }
 
 #include "moc_view.cpp"

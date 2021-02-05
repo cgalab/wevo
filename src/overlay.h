@@ -46,6 +46,14 @@ public:
         return m_duration;
     }
 
+    size_t maxSize() const {
+        return m_maxSize;
+    }
+    
+    size_t avgSize() const {
+        return m_avgSize;
+    }
+    
 private:
     void readInput(const std::string &filePath);
     void compOverlay();
@@ -53,6 +61,8 @@ private:
     std::vector<Site_2> m_sites;
     std::vector<std::set<int>> m_candSets;
     long long m_duration;
+    size_t m_maxSize{0};
+    size_t m_avgSize{0};
 };
 
 #endif /* OVERLAY_H */

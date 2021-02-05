@@ -196,7 +196,8 @@ private:
     void compVorEdges();
     void writeToIpe(const std::string &filePath) const;
     void writeToCsv(const std::string &filePath, long long runtime,
-            long long overlayDuration, long long eventDuration) const;
+            long long overlayDuration, long long eventDuration,
+            size_t maxCandSetSize, size_t nCandSets, size_t avgSize) const;
     
     void storeEv(const EvPtr &ev);
 
@@ -214,6 +215,7 @@ private:
     int m_invalidDomEvCnt{0};
     int m_edgeEvCnt{0};
     int m_invalidEdgeEvCnt{0};
+    int m_nVorVerts{0};
 #ifdef ENABLE_VIEW
     std::vector<EvPtr> m_evs;
 #endif

@@ -51,6 +51,7 @@ VorDiag::VorDiag(const std::string &inFilePath, bool bUseOverlay,
                  bool bEnableView) {
     const auto fr = FileReader{inFilePath};
     m_sites = fr.sites();
+    size_t n = m_sites.size(), maxCandSetSize = 0, nCandSets = 0, avgSize = 0;
 
     for (const auto &site : m_sites) {
         m_offCircs[site->id()] = std::make_shared<OffCirc>(site);
@@ -60,15 +61,25 @@ VorDiag::VorDiag(const std::string &inFilePath, bool bUseOverlay,
     std::chrono::high_resolution_clock::time_point t0;
     long long overlayDuration = 0;
 
+    std::cout << "Inserting initial collision events into event queue ...\n";
     if (!bUseOverlay) {
         t0 = std::chrono::high_resolution_clock::now();
         compColls();
     } else {
         const auto overlay = Overlay(inFilePath);
         overlayDuration = overlay.duration();
+        nCandSets = overlay.candSets().size();
+        maxCandSetSize = overlay.maxSize();
+        avgSize = overlay.avgSize();
 
-        t0 = std::chrono::high_resolution_clock::now();
-        compColls(overlay.candSets());
+        /*if (overlay.maxSize() > (n / 2)) {
+            // If the candidate sets are too big fall back to computing all collisions.
+            std::cout << "The largest candidate set is too big! " << overlay.maxSize() << " > " << (n / 2) << " ...\n";
+            compColls();
+        } else {*/
+            t0 = std::chrono::high_resolution_clock::now();
+            compColls(overlay.candSets());
+        //}
     }
 
     std::cout << "Processing events ...\n";
@@ -101,10 +112,9 @@ VorDiag::VorDiag(const std::string &inFilePath, bool bUseOverlay,
 
     if (!csvFilePath.empty()) {
         std::cout << "Writing output to" << csvFilePath << " ...\n";
-        writeToCsv(csvFilePath, runtime, duration1, duration2);
+        writeToCsv(csvFilePath, runtime, duration1, duration2, maxCandSetSize, nCandSets, avgSize);
     }
 
-    size_t n = m_sites.size();
     long long normRuntime = runtime / (n * std::pow(std::log2(n), 2));
     std::cout << "Run successful!\n"
             << "Computing the initial collisions took " << duration1 << " microseconds.\n"
@@ -118,7 +128,8 @@ VorDiag::VorDiag(const std::string &inFilePath, bool bUseOverlay,
             << "Additionally,\n"
             << "\t" << m_invalidCollEvCnt << " invalid collision events,\n"
             << "\t" << m_invalidDomEvCnt << " invalid domination events, and\n"
-            << "\t" << m_invalidEdgeEvCnt << " invalid edge events were ignored.\n";
+            << "\t" << m_invalidEdgeEvCnt << " invalid edge events were ignored.\n"
+            << "\t" << m_nVorVerts << " Voronoi nodes have been found.\n";
 }
 
 void VorDiag::compColls(const std::vector<std::set<int>> &candSets) {
@@ -514,10 +525,12 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
                 isect1->setIsWfVert(sqrdTime, true);
                 isect2->setIsWfVert(sqrdTime, false);
                 isect3->setIsWfVert(sqrdTime, false);
+                m_nVorVerts++;
             } else if (bIsWfVert2 && !bIsWfVert3) {
                 isect1->setIsWfVert(sqrdTime, true);
                 isect2->setIsWfVert(sqrdTime, false);
                 isect3->setIsWfVert(sqrdTime, true);
+                m_nVorVerts++;
             } else if (!bIsWfVert2 && !bIsWfVert3) {
                 isect1->setIsWfVert(sqrdTime, false);
                 //isect2->setIsWfVert(sqrdTime, false);
@@ -606,10 +619,12 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
                 isect1->setIsWfVert(sqrdTime, false);
                 isect2->setIsWfVert(sqrdTime, true);
                 isect3->setIsWfVert(sqrdTime, false);
+                m_nVorVerts++;
             } else if (bIsWfVert1 && !bIsWfVert3) {
                 isect1->setIsWfVert(sqrdTime, false);
                 isect2->setIsWfVert(sqrdTime, true);
                 isect3->setIsWfVert(sqrdTime, true);
+                m_nVorVerts++;
             } else if (!bIsWfVert1 && !bIsWfVert3) {
                 //isect1->setIsWfVert(sqrdTime, false);
                 isect2->setIsWfVert(sqrdTime, false);
@@ -669,6 +684,7 @@ bool VorDiag::deleteLowestArc(const std::shared_ptr<EdgeEv> &edgeEv,
         isect1->setIsWfVert(sqrdTime, false);
         isect2->setIsWfVert(sqrdTime, false);
         isect3->setIsWfVert(sqrdTime, true);
+        m_nVorVerts++;
     }
 
     return true;
@@ -859,12 +875,12 @@ void VorDiag::compVorEdges() {
 
 void VorDiag::writeToIpe(const std::string &filePath) const {
     auto iw = IpeWriter{filePath};
-    double scale = 1e-5;
+    double scale = 1e-4 / 6.;
 
     for (const auto &site : m_sites) {
         std::ostringstream strs;
         strs << "$s_" << site->id() 
-                << "\\,(" << CGAL::to_double(site->weight() / 1e5) << ")$";
+                << "\\,(" << CGAL::to_double(site->weight() / 1e3) << ")$";
 
         if (typeid(*site) == typeid(PntSite)) {
             const auto pntSite = std::static_pointer_cast<PntSite>(site);
@@ -889,18 +905,19 @@ void VorDiag::writeToIpe(const std::string &filePath) const {
     }*/
     
     const auto maxTime = FT{10},
-            timeStep = FT{.5};
+            timeStep = FT{.2};
     for (const auto &val : m_offCircs) {
         const auto offCirc = val.second;
         offCirc->writeArcsToIpe(iw, maxTime, timeStep, scale, evSqrdTimes);
     }
 #endif
-    
+
     iw.write();
 }
 
 void VorDiag::writeToCsv(const std::string &filePath, long long runtime,
-            long long overlayDuration, long long eventDuration) const {
+                         long long overlayDuration, long long eventDuration,
+                         size_t maxCandSetSize, size_t nCandSets, size_t avgCandSetSize) const {
     std::ofstream outFile;
     outFile.open(filePath, std::ofstream::out | std::ofstream::app);
 
@@ -909,7 +926,9 @@ void VorDiag::writeToCsv(const std::string &filePath, long long runtime,
                 << overlayDuration << "," << eventDuration << ","
                 << m_collEvCnt << "," << m_domEvCnt << "," << m_edgeEvCnt << ","
                 << m_invalidCollEvCnt << "," << m_invalidDomEvCnt << ","
-                << m_invalidEdgeEvCnt << "\n";
+                << m_invalidEdgeEvCnt << "," << maxCandSetSize << ","
+                << nCandSets << "," << avgCandSetSize << "," << m_nVorVerts
+                << "\n";
     }
 }
 
@@ -967,16 +986,10 @@ void VorDiagGraphicsItem::onNextEv(double t) {
 void VorDiagGraphicsItem::paint(QPainter *painter,
                                 const QStyleOptionGraphicsItem *, QWidget *) {
     for (const auto &edge : m_vorDiag.edges()) {
-        auto brush = QBrush{Qt::black};
-        painter->setBrush(brush);
-        painter->setPen(QPen{brush, 1.});
         Util::draw(painter, edge);
     }
     
     for (const auto &edge : m_vorDiag.segs()) {
-        auto brush = QBrush{Qt::black};
-        painter->setBrush(brush);
-        painter->setPen(QPen{brush, 1.});
         Util::draw(painter, edge);
     }
 }
