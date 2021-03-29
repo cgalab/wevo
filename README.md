@@ -11,6 +11,13 @@ make &&
 bash run_examples.sh
 ~~~~
 
+## Build Requirements
+* cmake
+* libgmp-dev
+* libmpfr-dev
+* libcgal-dev
+* libcgal-qt5-dev
+* libboost-all-dev
 
 ## Command Line Options
 `wevo` currently supports the following command line options:
