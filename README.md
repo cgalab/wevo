@@ -12,12 +12,16 @@ bash run_examples.sh
 ~~~~
 
 ## Build Requirements
+* build-essential
 * cmake
 * libgmp-dev
 * libmpfr-dev
 * libcgal-dev
 * libcgal-qt5-dev
 * libboost-all-dev
+* libqt5opengl5-dev
+* libqt5svg5-dev
+* qtbase5-dev
 
 ## Command Line Options
 `wevo` currently supports the following command line options:
