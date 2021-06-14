@@ -15,13 +15,12 @@ public:
     static Point_2 toPoint_2(const Circular_arc_point_2 &arcPnt);
     
     static void draw(QPainter *painter, const Point_2 &pnt);
-    static void draw(QPainter *painter, const Circular_arc_point_2 &arcPnt);
+    static void draw(QPainter *painter, const Circular_arc_point_2 &arcPnt, double size = 3.);
     static void draw(QPainter *painter, const Circle_2 &circ);
     static void draw(QPainter *painter, const Circular_arc_2 &arc);
     static void draw(QPainter *painter, const Line_arc_2 &seg);
     
-    static QRectF boundingRect(const Point_2 &pnt);
-    static QRectF boundingRect(const Circle_2 &circ);
+    static QRectF boundingRect(const Circle_2 &circ, double offset = 1.);
 };
 
 #endif

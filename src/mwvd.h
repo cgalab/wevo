@@ -2,6 +2,9 @@
 #define MWVD_H
 
 #include <queue>
+#ifdef ENABLE_VIEW
+#include <CGAL/Qt/Converter.h>
+#endif
 #include "offcirc.h"
 
 class Ev;
@@ -119,7 +122,6 @@ public:
 private:
     MovIsectPtr m_isect1;
     MovIsectPtr m_isect2;
-    SitePtr m_other;
 };
 
 class EvPtrComp {
@@ -128,6 +130,48 @@ public:
         if (lhs->sqrdTime() != rhs->sqrdTime()) {
             return lhs->sqrdTime() > rhs->sqrdTime();
         }
+        
+        if (lhs->arcPnt().x() != rhs->arcPnt().x()) {
+            return lhs->arcPnt().x() > rhs->arcPnt().x();
+        }
+        
+        if (lhs->arcPnt().y() != rhs->arcPnt().y()) {
+            return lhs->arcPnt().y() > rhs->arcPnt().y();
+        }
+        
+        if (lhs->type() != rhs->type()) {
+            return static_cast<int>(lhs->type()) > static_cast<int>(rhs->type());
+        } else {
+            switch (lhs->type()) {
+                case EvType::Dom:
+                {
+                    const auto domEv1 = std::static_pointer_cast<DomEv>(lhs),
+                            domEv2 = std::static_pointer_cast<DomEv>(rhs);
+                    
+                    const auto maxWeight1 = std::max(domEv1->isect1()->traj()->site1()->weight(),
+                                                     domEv1->isect1()->traj()->site2()->weight());
+                    const auto maxWeight2 = std::max(domEv2->isect1()->traj()->site1()->weight(),
+                                                     domEv2->isect1()->traj()->site2()->weight());
+                    const auto minWeight1 = std::min(domEv1->isect1()->traj()->site1()->weight(),
+                                                     domEv1->isect1()->traj()->site2()->weight());
+                    const auto minWeight2 = std::min(domEv2->isect1()->traj()->site1()->weight(),
+                                                     domEv2->isect1()->traj()->site2()->weight());
+                    
+                    if (maxWeight1 != maxWeight2) {
+                        return maxWeight1 < maxWeight2;
+                    }
+                    
+                    if (minWeight1 != minWeight2) {
+                        return minWeight1 < minWeight2;
+                    }
+                }
+                case EvType::None:
+                case EvType::Coll:
+                case EvType::Edge:
+                default:
+                    break;
+            }
+        } 
         
         return false;
     }
@@ -234,11 +278,16 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             QWidget *widget = nullptr) override;
     
+    const VorDiag & vorDiag() const {
+        return m_vorDiag;
+    }
+    
 public slots:
     void modelChanged() override;
     void onToggle(bool bIsVisible);
     void onPrevEv(double t);
     void onNextEv(double t);
+    void onHideEvPnt();
 
 signals:
     void timeChanged(double t);
@@ -249,8 +298,9 @@ private:
     QRectF m_boundingRect;
     bool m_bShow{true};
     size_t m_evIndex{0};
-    QPointF m_evPnt;
+    Circular_arc_point_2 m_evPnt;
     double m_time{0.};
+    bool m_bEvPntVisible{false};
 };
 
 #endif

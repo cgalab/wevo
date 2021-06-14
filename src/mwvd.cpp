@@ -50,7 +50,18 @@ VorDiag::VorDiag(const std::string &inFilePath, bool bUseOverlay,
                  const std::string &ipeFilePath, const std::string &csvFilePath,
                  bool bEnableView) {
     const auto fr = FileReader{inFilePath};
-    m_sites = fr.sites();
+    
+    for (const auto &s : fr.sites()) {
+        int x = std::get<0>(s), y = std::get<1>(s), w = std::get<2>(s),
+                siteIndex = std::get<3>(s);
+        m_sites.push_back(std::make_shared<PntSite>(Point_2{x, y}, w, siteIndex));
+    }
+
+    std::sort(m_sites.begin(), m_sites.end(),
+              [](const SitePtr &lhs, const SitePtr & rhs) {
+                  return lhs->weight() > rhs->weight();
+              });
+    
     size_t n = m_sites.size(), maxCandSetSize = 0, nCandSets = 0, avgSize = 0;
 
     for (const auto &site : m_sites) {
@@ -72,14 +83,8 @@ VorDiag::VorDiag(const std::string &inFilePath, bool bUseOverlay,
         maxCandSetSize = overlay.maxSize();
         avgSize = overlay.avgSize();
 
-        /*if (overlay.maxSize() > (n / 2)) {
-            // If the candidate sets are too big fall back to computing all collisions.
-            std::cout << "The largest candidate set is too big! " << overlay.maxSize() << " > " << (n / 2) << " ...\n";
-            compColls();
-        } else {*/
-            t0 = std::chrono::high_resolution_clock::now();
-            compColls(overlay.candSets());
-        //}
+        t0 = std::chrono::high_resolution_clock::now();
+        compColls(overlay.candSets());
     }
 
     std::cout << "Processing events ...\n";
@@ -324,7 +329,7 @@ void VorDiag::handleEv(const std::shared_ptr<DomEv> &domEv1) {
     BOOST_LOG_NAMED_SCOPE("handleDomEv");
     src::severity_logger<severity_level> slg;
 #endif
-            
+    
     const auto ev = m_queue.top();
     m_queue.pop();
     
@@ -468,14 +473,10 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
             return;
         }
     } else {
-        /*if (site1->weight() > site2->weight()
-            && site1->weight() > site3->weight()) {*/
         if (*site1 > *site2 && *site1 > *site3) {
 #ifdef ENABLE_LOGGING
             BOOST_LOG_SEV(slg, normal) << "Arc vanished along the highest weighted site.";
 #endif
-            /*const auto lowSite = site2->weight() < site3->weight() ? site2 : site3,
-                    medSite = site2->weight() < site3->weight() ? site3 : site2;*/
             const auto lowSite = *site2 < *site3 ? site2 : site3,
                     medSite = *site2 < *site3 ? site3 : site2;
 
@@ -500,12 +501,10 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
                 return;
             }
 
-            /*CGAL_assertion(lowSite->weight() < medSite->weight()
-                   && medSite->weight() < site1->weight());*/
-
             bool bIsWfVert2 = isect2->isWfVert(),
                     bIsWfVert3 = isect3->isWfVert();
-            const auto bCheckNeighbors = med->expandIsect(sqrdTime, isect3, isect1,
+            const auto bCheckNeighbors = med->expandIsect(sqrdTime, edgeEv->arcPnt(),
+                                                          isect3, isect1,
                                                           bIsWfVert2 && !bIsWfVert3);
             bool bLeft1 = high->collapseArc(sqrdTime, isect2, isect3),
                     bLeft3 = low->replaceIsect(sqrdTime, isect2, isect1);
@@ -536,8 +535,6 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
                 //isect2->setIsWfVert(sqrdTime, false);
                 //isect3->setIsWfVert(sqrdTime, false);
             }
-            /*} else if (site1->weight() < site2->weight()
-                       && site1->weight() < site3->weight()) {*/
         } else if (*site1 < *site2 && *site1 < *site3) {
 #ifdef ENABLE_LOGGING
             BOOST_LOG_SEV(slg, normal) << "Arc vanished along the lowest weighted site.";
@@ -569,9 +566,6 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
 #ifdef ENABLE_LOGGING
             BOOST_LOG_SEV(slg, normal) << "Arc vanished along the medium weighted site.";
 #endif
-            
-            /*const auto lowSite = site2->weight() < site3->weight() ? site2 : site3,
-                    highSite = site2->weight() < site3->weight() ? site3 : site2;*/
             const auto lowSite = *site2 < *site3 ? site2 : site3,
                     highSite = *site2 < *site3 ? site3 : site2;
             
@@ -587,9 +581,6 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
                     med = m_offCircs.at(site1->id()),
                     high = m_offCircs.at(highSite->id());
 
-            /*CGAL_assertion(lowSite->weight() < site1->weight()
-                           && site1->weight() < highSite->weight());*/
-
             if (!low->inclsIsect(isect1) || !med->inclsIsect(isect1)
                 || !med->inclsIsect(isect3) || !high->inclsIsect(isect3)) {
 #ifdef ENABLE_LOGGING
@@ -600,7 +591,8 @@ void VorDiag::handleEv(const std::shared_ptr<EdgeEv> &edgeEv) {
             }
 
             bool bIsWfVert1 = isect1->isWfVert(), bIsWfVert3 = isect3->isWfVert();
-            const auto &bCheckNeighbors = high->expandIsect(sqrdTime, isect3, isect2,
+            const auto &bCheckNeighbors = high->expandIsect(sqrdTime, edgeEv->arcPnt(),
+                                                            isect3, isect2,
                                                             bIsWfVert1 && !bIsWfVert3);
             bool bLeft2 = med->collapseArc(sqrdTime, isect1, isect3),
                     bLeft3 = low->replaceIsect(sqrdTime, isect1, isect2);
@@ -937,10 +929,18 @@ void VorDiag::writeToCsv(const std::string &filePath, long long runtime,
 VorDiagGraphicsItem::VorDiagGraphicsItem(const VorDiag &vorDiag)
 : m_vorDiag{vorDiag}
 {
+    prepareGeometryChange();
+    QRectF rect;
+    for (const auto &edge : m_vorDiag.edges()) {
+        const auto circ = edge.supporting_circle();
+        rect |= Util::boundingRect(circ);
+    }
+    
+    m_boundingRect = rect;
 }
 
 QRectF VorDiagGraphicsItem::boundingRect() const {
-    return QRectF{-1000., -1000., 2000., 2000.};
+    return m_boundingRect;
 }
 
 void VorDiagGraphicsItem::modelChanged() {
@@ -957,14 +957,16 @@ void VorDiagGraphicsItem::onPrevEv(double t) {
     const auto evs = m_vorDiag.events();
     if (m_evIndex > 0) {
         auto ev = evs.at(--m_evIndex);
-        double evTime = std::sqrt(CGAL::to_double(ev->sqrdTime()));
+        double evTime = CGAL::to_double(ev->sqrdTime());
         
         while (m_evIndex > 0 && evTime > t) {
             ev = evs.at(--m_evIndex);
-            evTime = std::sqrt(CGAL::to_double(ev->sqrdTime()));
+            evTime = CGAL::to_double(ev->sqrdTime());
         }
-        
-        emit timeChanged(evTime);
+
+        m_evPnt = ev->arcPnt();
+        m_bEvPntVisible = true;
+        emit timeChanged(std::sqrt(evTime));
     }
 }
 
@@ -972,25 +974,43 @@ void VorDiagGraphicsItem::onNextEv(double t) {
     const auto evs = m_vorDiag.events();
     if (m_evIndex < evs.size() - 1) {
         auto ev = evs.at(++m_evIndex);
-        double evTime = std::sqrt(CGAL::to_double(ev->sqrdTime()));
-        
+        double evTime = CGAL::to_double(ev->sqrdTime());
+
         while (m_evIndex < evs.size() - 1 && evTime < t) {
             ev = evs.at(++m_evIndex);
-            evTime = std::sqrt(CGAL::to_double(ev->sqrdTime()));
+            evTime = CGAL::to_double(ev->sqrdTime());
         }
-        
-        emit timeChanged(evTime);
+
+        m_evPnt = ev->arcPnt();
+        m_bEvPntVisible = true;
+        emit timeChanged(std::sqrt(evTime));
     }
+}
+
+void VorDiagGraphicsItem::onHideEvPnt() {
+    m_bEvPntVisible = false;
 }
 
 void VorDiagGraphicsItem::paint(QPainter *painter,
                                 const QStyleOptionGraphicsItem *, QWidget *) {
+    const auto scale = std::max(painter->worldTransform().m11(), 
+                                painter->worldTransform().m22());
+    auto brush = QBrush{Qt::black};
+    painter->setBrush(brush);
+    painter->setPen(QPen{brush, 1. / scale});
+
     for (const auto &edge : m_vorDiag.edges()) {
         Util::draw(painter, edge);
     }
     
     for (const auto &edge : m_vorDiag.segs()) {
         Util::draw(painter, edge);
+    }
+
+    if (m_bEvPntVisible) {
+        brush = QBrush{Qt::red};
+        painter->setBrush(brush);
+        Util::draw(painter, m_evPnt, 8.);
     }
 }
 

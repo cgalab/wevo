@@ -257,6 +257,12 @@ int Traj::isect(std::vector<TimePntPtr> &timePnts, const TrajPtr &other) const {
             }
         }
     }
-    
+
     return n;
+}
+
+const SitePtr & Traj::getOtherSite(int siteId) const {
+    CGAL_assertion(id().first == siteId || id().second == siteId);
+    const auto otherSiteId = id().first == siteId ? id().second : id().first;
+    return m_site1->id() == otherSiteId ? m_site1 : m_site2;
 }

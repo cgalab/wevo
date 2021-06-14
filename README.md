@@ -1,6 +1,6 @@
-# wevo (Version 0.1)
+# wevo (Version 0.2)
 
-`wevo` is currently an experimental prototype implementation. It computes the multiplicatively weighted Voronoi diagram of a given point set. Example input files can be found in the `inputs` folder.
+`wevo` is currently an experimental prototype implementation. It computes the multiplicatively weighted Voronoi diagram of a given point set. Example input files can be found in the `inputs` folder. `wevo` is able to parse `.pnts` as well as `.graphml` input files. Note that the current version of `wevo` was exclusively developed and tested on Linux systems.
 
 ## Build
 The easiest way to build `wevo` is by using the corresponding `CMakeLists.txt` file. If you also want to use the built-in view then don't forget to build `wevo` with the `BUILD_VIEW` option. To run some examples, execute the `run_examples.sh` script that is situated in the `build` directory. In particular, execute the following commands (from the `wevo` directory) to run our example inputs:

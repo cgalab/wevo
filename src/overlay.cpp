@@ -8,6 +8,7 @@
 #include <QString>
 #endif
 #include "overlay.h"
+#include "file_io.h"
 
 std::set<int> Overlay::OverlayLabel::operator()(const std::set<int> &lhs,
                                                 const std::set<int> &rhs) const {
@@ -30,23 +31,28 @@ Overlay::Overlay(const std::string &filePath) {
 }
 
 void Overlay::readInput(const std::string &filePath) {
-    std::ifstream file;
+    /*std::ifstream file;
     file.open(filePath, std::ifstream::in);
 
     const auto fSplit
             = [](const std::string &str, const std::regex &re) {
                 return std::vector<std::string>{std::sregex_token_iterator(str.begin(), str.end(), re, -1),
                                                 std::sregex_token_iterator()};
-            };
+            };*/
 
     const auto fComp
             = [](const std::tuple<int, int, int> &lhs,
                  const std::tuple<int, int, int> &rhs) {
-                return std::get<2>(lhs) > std::get<2>(rhs);
+                if (std::get<2>(lhs) != std::get<2>(rhs)) {
+                    return std::get<2>(lhs) > std::get<2>(rhs);
+                }
+                
+                return std::pow(std::get<0>(lhs), 2.) + std::pow(std::get<1>(lhs), 2.)
+                        > std::pow(std::get<0>(rhs), 2.) + std::pow(std::get<1>(rhs), 2.);
             };
     std::multiset<std::tuple<int, int, int>, decltype(fComp)> temps(fComp);
 
-    if (file.is_open()) {
+    /*if (file.is_open()) {
         std::string line;
         while (std::getline(file, line)) {
             const auto strs = fSplit(line, std::regex("\\s+"));
@@ -60,9 +66,15 @@ void Overlay::readInput(const std::string &filePath) {
                     y = std::stoi(strs.at(1)),
                     w = std::stoi(strs.at(2));
 #endif
-
             temps.insert(std::make_tuple(x, y, w));
         }
+    }*/
+    
+    const auto fr = FileReader{filePath};
+
+    for (const auto &s : fr.sites()) {
+        int x = std::get<0>(s), y = std::get<1>(s), w = std::get<2>(s);
+        temps.insert(std::make_tuple(x, y, w));
     }
 
     for (const auto temp : temps) {

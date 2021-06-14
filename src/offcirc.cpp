@@ -452,6 +452,7 @@ bool OffCirc::collapseArc(const Root_of_2 &sqrdTime,
 }
 
 std::pair<bool, bool> OffCirc::expandIsect(const Root_of_2 &sqrdTime,
+                                           const Circular_arc_point_2 &evPnt,
                                            const MovIsectPtr &from,
                                            const MovIsectPtr &to,
                                            bool bIsOnWf1) {
@@ -463,43 +464,27 @@ std::pair<bool, bool> OffCirc::expandIsect(const Root_of_2 &sqrdTime,
 #endif
 
     const auto fIsAngleLess
-            = [this](const Root_of_2 &sqrdTime, const MovIsectPtr &isect1,
-                     const MovIsectPtr &isect2) {
-#ifdef ENABLE_LOGGING
-                BOOST_LOG_NAMED_SCOPE("isAngleLess");
-                src::severity_logger<severity_level> slg;
+            = [this](const Circular_arc_point_2 &evPnt, const MovIsectPtr &isect1,
+                     const MovIsectPtr &
+#ifndef NDEBUG
+                     isect2
 #endif
-
-                const auto step = sqrdTime / static_cast<int>(1e20);
-                double angle1 = m_site->angle(isect1->pntAt(sqrdTime + step)),
-                        angle2 = m_site->angle(isect2->pntAt(sqrdTime + step));
-
-                CGAL_assertion(std::abs(angle1 - angle2) < 1e-2);
-                CGAL_assertion(std::abs(angle1 - angle2) > 1e-12);
-                if (std::abs(angle1 - angle2) < 1e-12) {
-/*#ifdef ENABLE_LOGGING
-                    BOOST_LOG_SEV(slg, error) << "Angle difference too low!";
-                    BOOST_LOG_SEV(slg, error) << "angle1 equals " << angle1
-                            << " and angle2 equals " << angle2 << ".";*/
-                    std::cout << "Angle difference too low! "
-                            << angle1 << " " << angle2 << "\n";
-//#endif
-                }
-
-                if (std::abs(angle1 - angle2) > 1e-2) {
-/*#ifdef ENABLE_LOGGING
-                    BOOST_LOG_SEV(slg, error) << "Angle difference too high!";
-                    BOOST_LOG_SEV(slg, error) << "angle1 equals " << angle1
-                            << " and angle2 equals " << angle2 << ".";*/
-                    std::cout << "Angle difference too high! "
-                            << angle1 << " " << angle2 << "\n";
-//#endif
-                }
-
-                return angle1 < angle2;
+                     ) {
+                const auto p1 = m_site->center();
+                double x = CGAL::to_double(evPnt.x()), y = CGAL::to_double(evPnt.y());
+                const auto p2 = Point_2{x, y};
+                const auto line = Line_2{p1, p2};
+                const auto site1 = isect1->traj()->getOtherSite(m_site->id());
+                const auto side = line.oriented_side(site1->center());
+#ifndef NDEBUG
+                const auto site2 = isect2->traj()->getOtherSite(m_site->id());
+                const auto side2 = line.oriented_side(site2->center());
+                CGAL_assertion(side != side2);
+#endif
+                return side == CGAL::Orientation::NEGATIVE;
             };
     
-    bool bIsLess = fIsAngleLess(sqrdTime, from, to);
+    bool bIsLess = fIsAngleLess(evPnt, from, to);
     MovIsectPtr neighbor;
     bool bOk = searchNeighbor(neighbor, from, !bIsLess);
     const auto &newArcId1 = std::make_pair(bIsLess ? from->id() : to->id(),
@@ -857,6 +842,8 @@ QRectF OffCircGraphicsItem::boundingRect() const {
 
 void OffCircGraphicsItem::paint(QPainter *painter,
                                 const QStyleOptionGraphicsItem *, QWidget *) {
+    const auto scale = std::max(painter->worldTransform().m11(), 
+                                painter->worldTransform().m22());
     const auto ih = m_offCirc->isectHistory();
 
     if (m_arcs.empty()
@@ -866,11 +853,9 @@ void OffCircGraphicsItem::paint(QPainter *painter,
             const auto pntSite
                     = std::static_pointer_cast<PntSite>(m_offCirc->site());
             const auto circ = pntSite->growOffAt(m_sqrdTime);
-            painter->setPen(QPen{QBrush{Qt::blue}, 1.});
+            painter->setPen(QPen{QBrush{Qt::blue}, 2. / scale});
             Util::draw(painter, circ);
         }
-        
-        return;
     }
     
     for (const auto &arc : m_arcs) {
@@ -902,7 +887,7 @@ void OffCircGraphicsItem::paint(QPainter *painter,
                     = std::static_pointer_cast<PntSite>(m_offCirc->site());
             const auto circ = pntSite->growOffAt(m_sqrdTime);
             const auto arc = Circular_arc_2{circ, pnt1, pnt2};
-            painter->setPen(QPen{QBrush{bIsOnWf ? Qt::blue : Qt::lightGray}, 1.});
+            painter->setPen(QPen{QBrush{bIsOnWf ? Qt::blue : Qt::lightGray}, 2. / scale});
             Util::draw(painter, arc);
         }
         
@@ -922,8 +907,13 @@ void OffCircGraphicsItem::modelChanged() {
     update();
 }
 
+void OffCircGraphicsItem::onToggle(bool bIsVisible) {
+    setVisible(bIsVisible);
+    update();
+}
+
 void OffCircGraphicsItem::onTimeChanged(double t) {
-    const auto sqrdTime = Root_of_2{t};
+    const auto sqrdTime = Root_of_2{std::pow(t, 2.)};
     const auto actions = m_offCirc->arcActions();
     const auto ih = m_offCirc->isectHistory();
     
@@ -934,13 +924,11 @@ void OffCircGraphicsItem::onTimeChanged(double t) {
     }
     
     if (m_sqrdTime < sqrdTime && m_step < actions.size()) {
-        m_sqrdTime = sqrdTime;
-
         auto nextAction = actions.at(m_step);
         auto nextSqrdTime = std::get<0>(nextAction);
         bool bFinished = false;
             
-        while (nextSqrdTime < m_sqrdTime && !bFinished) {
+        while (nextSqrdTime < sqrdTime && !bFinished) {
             bool bInsert = std::get<1>(nextAction);
             const auto arcId = std::get<2>(nextAction);
             const auto isect1 = ih.at(arcId.first), isect2 = ih.at(arcId.second);
@@ -949,14 +937,14 @@ void OffCircGraphicsItem::onTimeChanged(double t) {
             
             if (si1 < isect1->switches().size() - 1) {
                 const auto nsw = isect1->switches().at(si1);
-                if (nsw.first < m_sqrdTime) {
+                if (nsw.first < sqrdTime) {
                     m_switches[isect1->id()] = si1 + 1;
                 }
             }
             
             if (si2 < isect2->switches().size() - 1) {
                 const auto nsw = isect2->switches().at(si2);
-                if (nsw.first < m_sqrdTime) {
+                if (nsw.first < sqrdTime) {
                     m_switches[isect2->id()] = si2 + 1;
                 }
             }
@@ -976,13 +964,11 @@ void OffCircGraphicsItem::onTimeChanged(double t) {
             }
         }
     } else if (m_sqrdTime > sqrdTime && 0 < m_step) {
-        m_sqrdTime = sqrdTime;
-
         auto prevAction = actions.at(m_step - 1);
         auto prevSqrdTime = std::get<0>(prevAction);
         bool bFinished = false;
 
-        while (prevSqrdTime > m_sqrdTime && !bFinished) {
+        while (prevSqrdTime > sqrdTime && !bFinished) {
             bool bInsert = std::get<1>(prevAction);
             const auto arcId = std::get<2>(prevAction);
             const auto isect1 = ih.at(arcId.first), isect2 = ih.at(arcId.second);
@@ -991,14 +977,14 @@ void OffCircGraphicsItem::onTimeChanged(double t) {
             
             if (si1 > 0) {
                 const auto psw = isect1->switches().at(si1 - 1);
-                if (psw.first > m_sqrdTime) {
+                if (psw.first > sqrdTime) {
                     m_switches[isect1->id()] = si1 - 1;
                 }
             }
             
             if (si2 > 0) {
                 const auto psw = isect2->switches().at(si2 - 1);
-                if (psw.first > m_sqrdTime) {
+                if (psw.first > sqrdTime) {
                     m_switches[isect2->id()] = si2 - 1;
                 }
             }
@@ -1018,17 +1004,20 @@ void OffCircGraphicsItem::onTimeChanged(double t) {
             }
         }
     }
-    
+
+    m_bIncreased = m_sqrdTime > sqrdTime;
+    m_sqrdTime = sqrdTime;
+    prepareGeometryChange();
     updateBoundingRect();
     update();
 }
 
-void OffCircGraphicsItem::updateBoundingRect() {
+void OffCircGraphicsItem::updateBoundingRect(double offset) {
     if (typeid(*m_offCirc->site()) == typeid(PntSite)) {
         const auto pntSite
                 = std::static_pointer_cast<PntSite>(m_offCirc->site());
         const auto circ = pntSite->growOffAt(m_sqrdTime);
-        m_boundingRect = Util::boundingRect(circ);
+        m_boundingRect = Util::boundingRect(circ, offset);
     }
 }
 

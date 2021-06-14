@@ -53,10 +53,10 @@ int main(int argc, char *argv[]) {
 #ifdef ENABLE_VIEW
         if (bEnableView) {
             QApplication app(argc, argv);
-            QCoreApplication::setApplicationName("VorDiag");
+            QCoreApplication::setApplicationName("WeVo");
             QCoreApplication::setApplicationVersion(QT_VERSION_STR);
             MainWindow mainWindow;
-
+            
             for (const auto &site : vorDiag.sites()) {
                 mainWindow.addItem(new SiteGraphicsItem{site});
             }

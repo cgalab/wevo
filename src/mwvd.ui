@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MWVD</string>
+   <string>WeVo</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout">
@@ -47,6 +47,12 @@
        </item>
        <item>
         <widget class="QLineEdit" name="lineEditTime">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="readOnly">
           <bool>true</bool>
          </property>
@@ -60,7 +66,21 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditStepSize"/>
+        <widget class="QSpinBox" name="stepSizeSpinBox">
+         <property name="maximum">
+          <number>200</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>%</string>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer">
@@ -81,6 +101,12 @@
    </layout>
   </widget>
   <widget class="QToolBar" name="toolBar">
+   <property name="font">
+    <font>
+     <family>FontAwesome</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -102,6 +128,8 @@
    <addaction name="actionNextEv"/>
    <addaction name="separator"/>
    <addaction name="actionToggleVorDiag"/>
+   <addaction name="actionToggleWavefront"/>
+   <addaction name="actionToggleSites"/>
   </widget>
   <action name="actionIncrTime">
    <property name="text">
@@ -186,6 +214,37 @@
    </property>
    <property name="shortcut">
     <string>V</string>
+   </property>
+  </action>
+  <action name="actionToggleWavefront">
+   <property name="text">
+    <string></string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Wavefront</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>FontAwesome</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>W</string>
+   </property>
+  </action>
+  <action name="actionToggleSites">
+   <property name="text">
+    <string></string>
+   </property>
+   <property name="iconText">
+    <string></string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Sites</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
    </property>
   </action>
  </widget>

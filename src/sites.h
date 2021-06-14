@@ -80,6 +80,7 @@ public:
 
 public slots:
     void modelChanged() override;
+    void onToggle(bool bIsVisible);
     
 private:
     SitePtr m_site;

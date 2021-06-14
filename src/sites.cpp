@@ -51,11 +51,6 @@ SiteGraphicsItem::SiteGraphicsItem(const SitePtr &site)
     setAcceptHoverEvents(true);
     setToolTip("id " + QString::number(m_site->id()) + "\nweight " 
             + QString::number(CGAL::to_double(m_site->weight())));
-    
-    if (typeid(*m_site) == typeid(PntSite)) {
-        const auto pntSite = std::static_pointer_cast<PntSite>(m_site);
-        m_boundingRect = Util::boundingRect(pntSite->pnt());
-    }
 }
 
 QRectF SiteGraphicsItem::boundingRect() const {
@@ -70,9 +65,22 @@ void SiteGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*,
         painter->setBrush(Qt::darkGreen);
         Util::draw(painter, pntSite->pnt());
     }
+    
+    const auto scale = std::max(painter->worldTransform().m11(), 
+                                painter->worldTransform().m22());
+    double x = CGAL::to_double(m_site->center().x()),
+            y = CGAL::to_double(m_site->center().y()),
+            offset = 10. / scale;
+    prepareGeometryChange();
+    m_boundingRect = QRectF{x - offset, y - offset, 2. * offset, 2. * offset};
 }
 
 void SiteGraphicsItem::modelChanged() {
+    update();
+}
+
+void SiteGraphicsItem::onToggle(bool bIsVisible) {
+    setVisible(bIsVisible);
     update();
 }
 

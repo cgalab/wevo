@@ -62,7 +62,8 @@ public:
 
     bool collapseArc(const Root_of_2 &sqrdTime, const MovIsectPtr &from,
             const MovIsectPtr &to);
-    std::pair<bool, bool> expandIsect(const Root_of_2 &sqrdTime, const MovIsectPtr &from,
+    std::pair<bool, bool> expandIsect(const Root_of_2 &sqrdTime,
+            const Circular_arc_point_2 &evPnt, const MovIsectPtr &from,
             const MovIsectPtr &to, bool bIsOnWf);
     bool replaceIsect(const Root_of_2 &sqrdTime, const MovIsectPtr &oldIsect,
             const MovIsectPtr &newIsect);
@@ -129,9 +130,10 @@ public:
 public slots:
     void modelChanged() override;
     void onTimeChanged(double t);
+    void onToggle(bool bIsVisible);
     
 private:
-    void updateBoundingRect();
+    void updateBoundingRect(double offset = 2.);
     
     OffCircPtr m_offCirc;
     QPointF m_center;
@@ -140,6 +142,8 @@ private:
     size_t m_step{0};
     std::map<std::pair<MovIsectId, MovIsectId>, bool> m_arcs;
     std::map<MovIsectId, size_t> m_switches;
+    bool m_bIncreased{false};
+    bool m_bIsVisible{true};
 };
 
 #endif

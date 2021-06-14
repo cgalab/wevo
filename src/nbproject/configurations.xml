@@ -7,6 +7,7 @@
       <itemPath>bisector.h</itemPath>
       <itemPath>defs.h</itemPath>
       <itemPath>file_io.h</itemPath>
+      <itemPath>graphml.h</itemPath>
       <itemPath>isect.h</itemPath>
       <itemPath>log.h</itemPath>
       <itemPath>mwvd.h</itemPath>
@@ -29,6 +30,7 @@
                    projectFiles="true">
       <itemPath>bisector.cpp</itemPath>
       <itemPath>file_io.cpp</itemPath>
+      <itemPath>graphml.cpp</itemPath>
       <itemPath>isect.cpp</itemPath>
       <itemPath>log.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
@@ -66,7 +68,7 @@
       </qt>
       <compileType>
         <ccTool>
-          <standard>8</standard>
+          <standard>11</standard>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>BOOST_LOG_DYN_LINK</Elem>
@@ -81,6 +83,7 @@
             <linkerOptionItem>-lboost_log</linkerOptionItem>
             <linkerOptionItem>-lboost_program_options</linkerOptionItem>
             <linkerOptionItem>-lboost_thread</linkerOptionItem>
+            <linkerOptionItem>-lboost_graph</linkerOptionItem>
             <linkerOptionItem>-lgmp</linkerOptionItem>
             <linkerOptionItem>-lmpfr</linkerOptionItem>
             <linkerOptionItem>-lCGAL</linkerOptionItem>
@@ -98,6 +101,10 @@
       <item path="file_io.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="file_io.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="graphml.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="graphml.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="isect.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -179,10 +186,11 @@
         <linkerTool>
           <linkerLibItems>
             <linkerOptionItem>-lboost_system</linkerOptionItem>
-            <linkerOptionItem>-lboost_log</linkerOptionItem>
             <linkerOptionItem>-lboost_log_setup</linkerOptionItem>
+            <linkerOptionItem>-lboost_log</linkerOptionItem>
             <linkerOptionItem>-lboost_program_options</linkerOptionItem>
             <linkerOptionItem>-lboost_thread</linkerOptionItem>
+            <linkerOptionItem>-lboost_graph</linkerOptionItem>
             <linkerOptionItem>-lgmp</linkerOptionItem>
             <linkerOptionItem>-lmpfr</linkerOptionItem>
             <linkerOptionItem>-lCGAL</linkerOptionItem>
@@ -200,6 +208,10 @@
       <item path="file_io.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="file_io.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="graphml.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="graphml.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="isect.cpp" ex="false" tool="1" flavor2="0">
       </item>

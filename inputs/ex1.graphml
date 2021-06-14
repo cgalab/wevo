@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+    <key attr.name="vertex-coordinate-x" attr.type="string" for="node" id="x"/>
+    <key attr.name="vertex-coordinate-y" attr.type="string" for="node" id="y"/>
+    <key attr.name="vertex-weight" attr.type="string" for="node" id="weight"/>
+    <graph edgedefault="undirected">
+        <node id="0">
+            <data key="x">100</data>
+            <data key="y">100</data>
+            <data key="weight">100</data>
+        </node>
+        <node id="1">
+            <data key="x">200</data>
+            <data key="y">200</data>
+            <data key="weight">150</data>
+        </node>
+        <node id="2">
+            <data key="x">400</data>
+            <data key="y">200</data>
+            <data key="weight">180</data>
+        </node>
+        <node id="3">
+            <data key="x">400</data>
+            <data key="y">100</data>
+            <data key="weight">280</data>
+        </node>
+    </graph>
+</graphml>

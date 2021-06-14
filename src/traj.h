@@ -148,6 +148,8 @@ public:
     void insSec(const TrajSecPtr &sec) {
         m_trajSecs.push_back(sec);
     }
+    
+    const SitePtr & getOtherSite(int siteId) const;
 
 private:
     SitePtr m_site1;

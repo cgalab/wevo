@@ -4,7 +4,13 @@
 #include <fstream>
 #include <regex>
 #include <set>
-#include "sites.h"
+#ifdef ENABLE_VIEW
+#include <QString>
+#endif
+#include "defs.h"
+
+// x, y, w, index
+using SiteData = std::tuple<int, int, int, int>;
 
 class IpeObj {
 public:
@@ -61,17 +67,18 @@ class FileReader {
 public:
     FileReader(const std::string &filePath);
 
-    const std::vector<SitePtr> & sites() const {
+    const std::vector<SiteData> & sites() const {
         return m_sites;
     }
 
 private:
     void readPnts();
+    void readGraphml();
 
     std::vector<std::string> split(const std::string &str,
             const std::regex &re) const;
 
-    std::vector<SitePtr> m_sites;
+    std::vector<SiteData> m_sites;
     std::ifstream m_file;
 };
 

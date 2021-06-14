@@ -2,7 +2,7 @@
 #include <iostream>
 #include <assert.h>
 #include "file_io.h"
-#include "sites.h"
+#include "graphml.h"
 
 const char *IPE_HEADER = "<?xml version=\"1.0\"?> \
 <!DOCTYPE ipe SYSTEM \"ipe.dtd\"> \
@@ -390,6 +390,8 @@ FileReader::FileReader(const std::string &filePath) {
 
     if (suffix == "pnts") {
         readPnts();
+    } else if (suffix == "graphml") {
+        readGraphml();
     }
 }
 
@@ -410,14 +412,29 @@ void FileReader::readPnts() {
                     w = std::stoi(strs.at(2));
 #endif
 
-            m_sites.push_back(std::make_shared<PntSite>(Point_2{x, y}, w, siteId++));
+            m_sites.push_back(std::make_tuple(x, y, w, siteId++));
         }
     }
+}
 
-    std::sort(m_sites.begin(), m_sites.end(),
-              [](const SitePtr &lhs, const SitePtr & rhs) {
-                  return lhs->weight() > rhs->weight();
-              });
+void FileReader::readGraphml() {
+    if (m_file.is_open()) {
+        GraphmlData data{m_file};
+        const auto g = data.graph();
+        auto indexMap = boost::get(boost::vertex_index, g);
+
+        for (auto vp = boost::vertices(g); vp.first != vp.second; ++vp.first) {
+            const auto v = *vp.first;
+#ifdef ENABLE_VIEW
+            int x = QString::fromStdString(g[v].x).toInt(),
+                    y = QString::fromStdString(g[v].y).toInt(),
+                    w = QString::fromStdString(g[v].weight).toInt();
+#else
+            int x = std::stoi(g[v].x), y = std::stoi(g[v].y), w = std::stoi(g[v].weight);
+#endif
+            m_sites.push_back(std::make_tuple(x, y, w, indexMap[v]));
+        }
+    }
 }
 
 std::vector<std::string> FileReader::split(const std::string &str,

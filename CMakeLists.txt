@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.1.0)
 
 project(wevo)
 
-option(BUILD_VIEW "Build with graphical user interface" ON)
+option(BUILD_VIEW "Build with graphical user interface" OFF)
 option(BUILD_LOG "Build with logging functionality" OFF)
 
 set (Tutorial_VERSION_MAJOR 0)
 set (Tutorial_VERSION_MINOR 1)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 

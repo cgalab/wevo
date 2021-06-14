@@ -3,6 +3,7 @@
 
 #include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Simple_cartesian.h>
 
 using CK = CGAL::Exact_circular_kernel_2;
 using Point_2 = CGAL::Point_2<CK>;
